@@ -7,7 +7,6 @@ public class Section {
     private final String name; // The name of the section (e.g., "electronics", "clothing")
     private final List<Item> items = new LinkedList<>(); // A list to hold items in this section
     private int waitingCustomers = 0;
-    private final Integer limit = 20;
 
     // Constructor to initialize a Section with a name
     public Section(String name) {
@@ -32,18 +31,17 @@ public class Section {
 
 
     // Adds an item to the section; synchronized to manage concurrent access
-    public synchronized void addItem(Item item) {
-        if (!isFull()) {
-            items.add(item); // Add the item to the list
-            notifyAll(); // Notify all waiting threads (e.g., customers waiting for an item)
+    public synchronized void addItem(Item item) throws InterruptedException {
+        while (this.isFull()) {
+            wait();
         }
-        else {
-            // wait?
-        }
+        items.add(item);
+        notifyAll();
     }
 
     // Check if the section is full
     public synchronized boolean isFull() {
+        int limit = 20;
         return items.size() >= limit;
     }
 
