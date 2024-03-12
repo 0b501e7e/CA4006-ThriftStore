@@ -97,35 +97,33 @@ public class Assistant implements Runnable {
 
 
     private void decideNextAction() {
-        // Clear previous waitingMapping entries to reflect the current decision cycle
-        waitingMapping.clear();
+       // get the count of customers waiting for each section.
+       // find the highest count, go stock that area.
+       // then do the next or stock empty sections
+       // if carried items is empty, go delivery area.
+       if (carriedItems.isEmpty()) {
+           currentState = State.RETURNING_TO_DELIVERY_AREA;
+       }
 
-        // Priority: 1. Waiting customers, 2. Empty sections
-        for (Item item : carriedItems) {
-            String sectionName = item.getCategory();
-            Section section = sections.get(sectionName);
-            int priority = section.getWaitingCustomers();
+       waitingMapping.clear();
 
-            if (section.isEmpty()) {
-                priority += 1000; // Arbitrary high number to prioritize empty sections
-            }
+       for (Item item : carriedItems) {
+           String sectionName = item.getCategory();
+           Section section = sections.get(sectionName);
+           int customerCount = section.getWaitingCustomers();
+           if (section.isEmpty()) {
+               waitingMapping.put(section, 1);
+           } else {
+               waitingMapping.put(section, customerCount);
+           }
+       }
 
-            waitingMapping.putIfAbsent(section, priority);
-        }
+       // get the highest customerCount, and go to that section
+       Map.Entry<Section, Integer> maxEntry = Collections.max(waitingMapping.entrySet(), Map.Entry.comparingByValue());
+       currentSection = maxEntry.getKey();
 
-        // Find the section with the highest priority (waiting customers or being empty)
-        Optional<Map.Entry<Section, Integer>> maxEntry = waitingMapping.entrySet()
-                .stream()
-                .max(Map.Entry.comparingByValue());
+       currentState = State.MOVING_TO_SECTION;
 
-        if (maxEntry.isPresent() && !carriedItems.isEmpty()) {
-            currentSection = maxEntry.get().getKey();
-            currentState = State.MOVING_TO_SECTION;
-        } else {
-            if (carriedItems.isEmpty()) {
-                currentState = State.RETURNING_TO_DELIVERY_AREA;
-            }
-        }
     }
 
 
