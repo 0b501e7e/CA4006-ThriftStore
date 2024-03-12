@@ -19,9 +19,10 @@ public class Assistant implements Runnable {
     private enum State {
         MOVING_TO_SECTION,
         STOCKING,
-        RETURNING_TO_DELIVERY_AREA
+        RETURNING_TO_DELIVERY_AREA,
+        INIT
     }
-    private State currentState = State.STOCKING;
+    private State currentState = State.INIT;
 
     private List<Item> carriedItems = new ArrayList<>();
     private Section currentSection;
@@ -60,6 +61,9 @@ public class Assistant implements Runnable {
                         Thread.sleep(calculateMovementTime());
                         pickUpItems();
                     }
+                    case INIT -> {
+                        pickUpItems();
+                    }
                 }
             }
         } catch (InterruptedException e) {
@@ -85,6 +89,7 @@ public class Assistant implements Runnable {
                     iterator.remove(); // Remove after stocking
                     System.out.println("[" + System.currentTimeMillis() + "] Assistant " + id + " stocked " + item.getCategory() + " in " + currentSection.getName());
                 }
+            }
         }
     }
 
