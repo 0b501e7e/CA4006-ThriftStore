@@ -25,8 +25,14 @@ public class Section {
         }
     }
 
-    public boolean isFull() {
-        return items.size() == limit;
+    // Check if the section is full
+    public synchronized boolean isFull() {
+        return items.size() >= limit;
+    }
+
+    // Check if the section is empty
+    public synchronized boolean isEmpty() {
+        return items.isEmpty();
     }
 
     // Removes and returns the first item from the section; waits if no items are available

@@ -25,11 +25,14 @@ public class Customer implements Runnable {
                 String category = categories[random.nextInt(categories.length)];
                 Section section = sections.get(category);
                 
-                // Attempt to remove (buy) an item from the chosen section
-                Item item = section.removeItem();
-                
-                // Log the purchase
-                System.out.println("Customer " + id + " bought " + item.getCategory());
+                synchronized (section) {
+                    while (section.isEmpty()) {
+                        section.wait(); // Wait for an item to become available
+                    }
+                    // Attempt to remove (buy) an item from the chosen section
+                    Item item = section.removeItem();
+                    System.out.println("Customer " + id + " bought " + item.getCategory() + " from " + category);
+                }
                 
                 // Simulate time delay for buying an item
                 Thread.sleep(10);

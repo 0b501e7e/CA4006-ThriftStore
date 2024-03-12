@@ -85,7 +85,7 @@ public class Assistant implements Runnable {
                 Item item = iterator.next();
                 if (Objects.equals(item.getCategory(), currentSection.getName())) {
                     currentSection.addItem(item);
-                    Thread.sleep(calculateTickTime()); // Simulating stocking time with variability
+                    Thread.sleep(calculateMovementTime()); // Simulating stocking time with variability
                     iterator.remove(); // Remove after stocking
                     System.out.println("[" + System.currentTimeMillis() + "] Assistant " + id + " stocked " + item.getCategory() + " in " + currentSection.getName());
                 }
