@@ -1,4 +1,4 @@
-package main.thriftstore.model;
+package src.main.thriftstore.model;
 
 public class Item {
     private final String category; // Stores the category to which this item belongs

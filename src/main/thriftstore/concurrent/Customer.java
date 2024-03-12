@@ -1,8 +1,8 @@
-package main.thriftstore.concurrent;
+package src.main.thriftstore.concurrent;
 
 // Necessary imports for handling items and sections from the model package, and for utility purposes
-import main.thriftstore.model.Item;
-import main.thriftstore.model.Section;
+import src.main.thriftstore.model.Item;
+import src.main.thriftstore.model.Section;
 import java.util.Map;
 import java.util.Random;
 

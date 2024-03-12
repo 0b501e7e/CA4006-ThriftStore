@@ -1,8 +1,12 @@
+import src.main.thriftstore.ThriftStore;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import src.main.thriftstore.model.Section;
+import src.main.thriftstore.model.DeliveryBox;
+import src.main.thriftstore.concurrent.Assistant;
+import src.main.thriftstore.concurrent.Customer;
 public class Main {
     public static void main(String[] args) {
         // Create sections

@@ -1,17 +1,18 @@
-package main.thriftstore;
+package src.main.thriftstore;
 
-import main.thriftstore.model.Item;
-import main.thriftstore.model.Section;
-import main.thriftstore.model.DeliveryBox;
-import main.thriftstore.concurrent.Assistant;
-import main.thriftstore.concurrent.Customer;
+import src.main.thriftstore.model.Item;
+import src.main.thriftstore.model.Section;
+import src.main.thriftstore.model.DeliveryBox;
+import src.main.thriftstore.concurrent.Assistant;
+import src.main.thriftstore.concurrent.Customer;
 
 
-import main.thriftstore.model.*;
-import main.thriftstore.concurrent.*;
+import src.main.thriftstore.model.*;
+import src.main.thriftstore.concurrent.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 public class ThriftStore {
     private final Map<String, Section> sections = new HashMap<>();
@@ -20,6 +21,8 @@ public class ThriftStore {
     private final ExecutorService customerPool;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final AtomicInteger tickCount = new AtomicInteger();
+
+    private Random random = new Random();
 
     public ThriftStore() {
         // Initialize sections
@@ -52,8 +55,7 @@ public class ThriftStore {
         int currentTick = tickCount.incrementAndGet();
         System.out.println("Tick: " + currentTick);
 
-        // Example: Simulate delivery every 100 ticks
-        if (currentTick % 100 == 0) {
+        if( random.nextDouble() < 0.01 ) {
             simulateDelivery();
         }
     }

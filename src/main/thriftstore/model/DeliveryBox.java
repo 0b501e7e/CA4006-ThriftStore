@@ -1,4 +1,4 @@
-package main.thriftstore.model;
+package src.main.thriftstore.model;
 
 import java.util.ArrayList;
 import java.util.List;
