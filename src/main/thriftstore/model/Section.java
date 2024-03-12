@@ -14,6 +14,23 @@ public class Section {
         this.name = name;
     }
 
+    private int waitingCustomers = 0;
+
+    public synchronized void addWaitingCustomer() {
+        waitingCustomers++;
+    }
+
+    public synchronized void removeWaitingCustomer() {
+        if (waitingCustomers > 0) {
+            waitingCustomers--;
+        }
+    }
+
+    public synchronized int getWaitingCustomers() {
+        return waitingCustomers;
+    }
+
+
     // Adds an item to the section; synchronized to manage concurrent access
     public synchronized void addItem(Item item) {
         if (!isFull()) {
