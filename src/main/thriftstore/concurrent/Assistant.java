@@ -21,7 +21,7 @@ public class Assistant implements Runnable {
         STOCKING,
         RETURNING_TO_DELIVERY_AREA
     }
-    private State currentState;
+    private State currentState = State.STOCKING;
 
     private List<Item> carriedItems = new ArrayList<>();
     private Section currentSection;
@@ -63,6 +63,7 @@ public class Assistant implements Runnable {
                 }
             }
         } catch (InterruptedException e) {
+            System.out.println("Assistant " + id + " was interrupted.");
             Thread.currentThread().interrupt();
         }
     }
@@ -74,14 +75,16 @@ public class Assistant implements Runnable {
 
     // might need to check the categories here, as we could have different items
     private void stockItems() throws InterruptedException {
-        Iterator<Item> iterator = carriedItems.iterator();
-        while (iterator.hasNext()) {
-            Item item = iterator.next();
-            if (Objects.equals(item.getCategory(), currentSection.getName())) {
-                currentSection.addItem(item);
-                Thread.sleep(100); // Simulate 1 tick per item for stocking
-                iterator.remove(); // Remove the item from carriedItems after stocking
-            }
+        synchronized (currentSection) { // Ensure exclusive access to the section
+            Iterator<Item> iterator = carriedItems.iterator();
+            while (iterator.hasNext()) {
+                Item item = iterator.next();
+                if (Objects.equals(item.getCategory(), currentSection.getName())) {
+                    currentSection.addItem(item);
+                    Thread.sleep(calculateTickTime()); // Simulating stocking time with variability
+                    iterator.remove(); // Remove after stocking
+                    System.out.println("[" + System.currentTimeMillis() + "] Assistant " + id + " stocked " + item.getCategory() + " in " + currentSection.getName());
+                }
         }
     }
 
@@ -110,6 +113,5 @@ public class Assistant implements Runnable {
             Thread.currentThread().interrupt();
         }
     }
-
 
 }
