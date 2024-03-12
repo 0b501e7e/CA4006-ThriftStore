@@ -6,7 +6,7 @@ import java.util.List;
 public class Section {
     private final String name; // The name of the section (e.g., "electronics", "clothing")
     private final List<Item> items = new LinkedList<>(); // A list to hold items in this section
-
+    private int waitingCustomers = 0;
     private final Integer limit = 20;
 
     // Constructor to initialize a Section with a name
@@ -14,7 +14,7 @@ public class Section {
         this.name = name;
     }
 
-    private int waitingCustomers = 0;
+
 
     public synchronized void addWaitingCustomer() {
         waitingCustomers++;

@@ -119,4 +119,7 @@ public class Assistant implements Runnable {
         }
     }
 
+    // Breaks taken by assistants (e.g., every 200-300 ticks an assistant will take a break of 150 ticks).
+    private void takeBreak() {}
+
 }
