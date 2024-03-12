@@ -38,7 +38,7 @@ public class ThriftStore {
 
     public void startSimulation() {
         // Schedule tick incrementer
-        scheduler.scheduleAtFixedRate(this::onTick, 0, 1, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::onTick, 0, 100, TimeUnit.MILLISECONDS);
 
         // Start assistant threads
         for (int i = 0; i < 2; i++) {

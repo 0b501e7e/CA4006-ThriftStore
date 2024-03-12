@@ -27,6 +27,8 @@ public class Assistant implements Runnable {
     private List<Item> carriedItems = new ArrayList<>();
     private Section currentSection;
 
+    private final Map<Section, Integer> waitingMapping = new HashMap<>();
+
 
 
     // Constructor initializes the assistant with an ID, delivery box, and sections map
@@ -85,7 +87,7 @@ public class Assistant implements Runnable {
                 Item item = iterator.next();
                 if (Objects.equals(item.getCategory(), currentSection.getName())) {
                     currentSection.addItem(item);
-                    Thread.sleep(calculateMovementTime()); // Simulating stocking time with variability
+                    Thread.sleep(100); // Simulating stocking time with variability
                     iterator.remove(); // Remove after stocking
                     System.out.println("[" + System.currentTimeMillis() + "] Assistant " + id + " stocked " + item.getCategory() + " in " + currentSection.getName());
                 }
@@ -95,16 +97,37 @@ public class Assistant implements Runnable {
 
 
     private void decideNextAction() {
-        // Implement logic to decide whether to move to another section or return to delivery area
-        if (!carriedItems.isEmpty()) {
-            String nextCategory = carriedItems.get(0).getCategory();
-            currentSection = sections.get(nextCategory);
-            currentState = State.MOVING_TO_SECTION;
+        // Clear previous waitingMapping entries to reflect the current decision cycle
+        waitingMapping.clear();
+
+        // Priority: 1. Waiting customers, 2. Empty sections
+        for (Item item : carriedItems) {
+            String sectionName = item.getCategory();
+            Section section = sections.get(sectionName);
+            int priority = section.getWaitingCustomers();
+
+            if (section.isEmpty()) {
+                priority += 1000; // Arbitrary high number to prioritize empty sections
+            }
+
+            waitingMapping.putIfAbsent(section, priority);
         }
-        else {
-            currentState = State.RETURNING_TO_DELIVERY_AREA;
+
+        // Find the section with the highest priority (waiting customers or being empty)
+        Optional<Map.Entry<Section, Integer>> maxEntry = waitingMapping.entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue());
+
+        if (maxEntry.isPresent() && !carriedItems.isEmpty()) {
+            currentSection = maxEntry.get().getKey();
+            currentState = State.MOVING_TO_SECTION;
+        } else {
+            if (carriedItems.isEmpty()) {
+                currentState = State.RETURNING_TO_DELIVERY_AREA;
+            }
         }
     }
+
 
     private void pickUpItems() {
         try {
