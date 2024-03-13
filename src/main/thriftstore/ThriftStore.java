@@ -15,27 +15,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Random;
 
 public class ThriftStore {
-    private final Map<String, Section> sections = new HashMap<>();
-    private final DeliveryBox deliveryBox = new DeliveryBox();
+    private final Map<String, Section> sections;
+    private final DeliveryBox deliveryBox;
     private final ExecutorService assistantPool;
     private final ExecutorService customerPool;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final AtomicInteger tickCount = new AtomicInteger();
+    private final Random random = new Random();
+    public static long TICK_TIME_SIZE = 100; // Example: Define the tick time size, e.g., 100 milliseconds per tick
 
-    private Random random = new Random();
-
-    public static long TICK_TIME_SIZE = 0;
-    public ThriftStore(long _TICK_TIME_SIZE) {
-        TICK_TIME_SIZE = _TICK_TIME_SIZE;
-        // Initialize sections
-        String[] categories = {"electronics", "clothing", "furniture", "toys", "sporting goods", "books"};
-        for (String category : categories) {
-            sections.put(category, new Section(category));
-        }
-
-        // Initialize thread pools for assistants and customers
-        assistantPool = Executors.newFixedThreadPool(2); // Example: 2 assistants
-        customerPool = Executors.newFixedThreadPool(5); // Example: 5 customers
+    // Constructor accepting initialized components
+    public ThriftStore(Map<String, Section> sections, DeliveryBox deliveryBox, int assistantCount, int customerCount) {
+        this.sections = sections;
+        this.deliveryBox = deliveryBox;
+        this.assistantPool = Executors.newFixedThreadPool(assistantCount);
+        this.customerPool = Executors.newFixedThreadPool(customerCount);
     }
 
     public void startSimulation() {
@@ -98,19 +92,5 @@ public class ThriftStore {
             assistantPool.shutdownNow();
             customerPool.shutdownNow();
         }
-    }
-
-    public static void main(String[] args) {
-        ThriftStore store = new ThriftStore(TICK_TIME_SIZE);
-        store.startSimulation();
-
-        // Example: Stop simulation after some time or based on some condition
-        // This could be replaced with a more sophisticated control mechanism
-        try {
-            Thread.sleep(10 * TICK_TIME_SIZE); // Run for 10 seconds for demonstration
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        store.stopSimulation();
     }
 }

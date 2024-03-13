@@ -9,41 +9,30 @@ import src.main.thriftstore.concurrent.Assistant;
 import src.main.thriftstore.concurrent.Customer;
 public class Main {
     public static void main(String[] args) {
-        // Create sections
+        // Initialize sections
         Map<String, Section> sections = new HashMap<>();
-        sections.put("electronics", new Section("electronics"));
-        sections.put("clothing", new Section("clothing"));
-        sections.put("furniture", new Section("furniture"));
-        sections.put("toys", new Section("toys"));
-        sections.put("sporting goods", new Section("sporting goods"));
-        sections.put("books", new Section("books"));
+        String[] categories = {"electronics", "clothing", "furniture", "toys", "sporting goods", "books"};
+        for (String category : categories) {
+            sections.put(category, new Section(category));
+        }
 
-        // Create delivery box
+        // Initialize the delivery box
         DeliveryBox deliveryBox = new DeliveryBox();
 
-        // Create thrift store simulation instance (not shown in previous steps but assumed to exist)
-        ThriftStore thriftStore = new ThriftStore(Long.parseLong(args[0]));
+        // Define the number of assistants and customers
+        int assistantCount = 2;
+        int customerCount = 5;
 
-        // Start ticking mechanism of the thrift store
+        // Create the ThriftStore instance with initialized components
+        ThriftStore thriftStore = new ThriftStore(sections, deliveryBox, assistantCount, customerCount);
+
+        // Start the simulation
         thriftStore.startSimulation();
 
-        // Create and start threads for assistants
-        ExecutorService assistantService = Executors.newFixedThreadPool(Integer.parseInt(args[1])); // Assuming 2 assistants for simplicity
-        for (int i = 0; i < Integer.parseInt(args[1]); i++) {
-            assistantService.submit(new Assistant(i + 1, deliveryBox, sections));
-        }
-
-        // Create and start threads for customers
-        ExecutorService customerService = Executors.newFixedThreadPool(Integer.parseInt(args[2])); // Assuming 5 customers for simplicity
-        for (int i = 0; i < Integer.parseInt(args[2]); i++) {
-            customerService.submit(new Customer(i + 1, sections));
-        }
-
-        // Add shutdown hook to stop the executor services on shutdown
+        // Setup a shutdown hook to ensure resources are cleaned up properly
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("Shutting down...");
-            assistantService.shutdownNow();
-            customerService.shutdownNow();
+            thriftStore.stopSimulation();
+            System.out.println("Simulation stopped.");
         }));
     }
 }
