@@ -6,6 +6,7 @@ import src.main.thriftstore.model.Item;
 import src.main.thriftstore.model.Section;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 // a customer needs to be able to check if a section is being stocked and wait for that to be finished
 // takes 1 tick to take an item
@@ -17,10 +18,17 @@ public class Customer implements Runnable {
     private final Map<String, Section> sections; // Store sections accessible to the customer
     private final int id; // Unique identifier for the customer
     private static final Random random = new Random(); // Random generator for selecting items
+    private final AtomicInteger tickCount;
 
-    public Customer(int id, Map<String, Section> sections) {
+    public Customer(int id, Map<String, Section> sections, AtomicInteger tickCount) {
         this.id = id; // Assign the customer ID
         this.sections = sections; // Initialize sections from which the customer can buy items
+        this.tickCount = tickCount;
+    }
+
+    private void log(String action, String details) {
+        long threadId = Thread.currentThread().threadId();
+        System.out.println(String.format("[Thread: %d, Customer: %d] %s - %s", threadId, id, action, details));
     }
 
     @Override
@@ -36,13 +44,13 @@ public class Customer implements Runnable {
                     while (section.isEmpty() || section.isBeingStocked()) {
                         section.addWaitingCustomer();
                         section.wait(); // Wait for an item to become available
-
+                        log("Waiting for item", String.format("Waiting for item in category: %s", category));
                     }
                     // Attempt to remove (buy) an item from the chosen section
                     section.removeWaitingCustomer();
                     Item item = section.removeItem();
 
-                    System.out.println("Customer " + id + " bought " + item.getCategory() + " from " + category);
+                    log("Purchased item", String.format("Bought %s", item.getCategory()));
                 }
                 
                 // Simulate time delay for buying an item
@@ -50,6 +58,7 @@ public class Customer implements Runnable {
             }
         } catch (InterruptedException e) {
             // Handle possible interruption of the customer thread
+            log("Interrupted", "Customer thread was interrupted.");
             Thread.currentThread().interrupt();
         }
     }

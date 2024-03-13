@@ -60,6 +60,7 @@ public class Assistant implements Runnable {
                         // Calculate and simulate movement time
                         Thread.sleep(calculateMovementTime());
                         currentState = State.STOCKING;
+                        log("Moving to section: " + currentSection.getName());
                     }
                     case STOCKING -> {
                         currentSection.startStocking();
@@ -70,6 +71,7 @@ public class Assistant implements Runnable {
                     case RETURNING_TO_DELIVERY_AREA -> {
                         Thread.sleep(calculateMovementTime());
                         pickUpItems();
+                        log("Returning to delivery area.");
                     }
                     case INIT -> {
                         pickUpItems();
@@ -78,9 +80,15 @@ public class Assistant implements Runnable {
                 }
             }
         } catch (InterruptedException e) {
-            System.out.println("Assistant " + id + " was interrupted.");
+            log("was interrupted.");
             Thread.currentThread().interrupt();
         }
+    }
+
+    private void log(String message) {
+        long threadId = Thread.currentThread().threadId();
+        System.out.println(String.format("[Thread: %d, Assistant: %d] %s", 
+            threadId, id, message));
     }
 
     private long calculateMovementTime() {
@@ -98,17 +106,10 @@ public class Assistant implements Runnable {
                     currentSection.addItem(item);
                     Thread.sleep(ThriftStore.TICK_TIME_SIZE); // Simulating stocking time with variability
                     iterator.remove(); // Remove after stocking
-                    System.out.println(String.format("<%d> Assistant=%d Started Stocking : %s=%d", 
-                    tickCount.get(), 
-                    id, 
-                    item.getCategory(), 
-                    1));
+                    log("Is Stocking: " + item.getCategory());
                 }
             }
-            System.out.println(String.format("<%d> Assistant=%d Finished Stocking : %s", 
-            tickCount.get(), 
-            id, 
-            currentSection.getName()));
+            log("Finished Stocking: " + currentSection.getName());
         }
     }
 
@@ -119,9 +120,13 @@ public class Assistant implements Runnable {
        // then do the next or stock empty sections
        // if carried items is empty, go delivery area.
        if (carriedItems.isEmpty()) {
+<<<<<<< HEAD
            System.out.printf("<%d> Assistant=%d RETURNING TO DELIVERY AREA \n",
                    tickCount.get(),
                    id);
+=======
+           log("returning to delivery area");
+>>>>>>> ad69f89 (more output :))
            currentState = State.RETURNING_TO_DELIVERY_AREA;
            return;
        }
@@ -149,9 +154,13 @@ public class Assistant implements Runnable {
 
 
     private void pickUpItems() {
+<<<<<<< HEAD
         System.out.printf("<%d> Assistant=%d PICKING UP ITEMS\n",
                 tickCount.get(),
                 id);
+=======
+        log("Picking up items.");
+>>>>>>> ad69f89 (more output :))
         try {
             carriedItems = deliveryBox.takeItems(10);
             if (!carriedItems.isEmpty()) {

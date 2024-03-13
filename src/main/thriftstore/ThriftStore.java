@@ -22,7 +22,7 @@ public class ThriftStore {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final AtomicInteger tickCount = new AtomicInteger();
     private final Random random = new Random();
-    public static long TICK_TIME_SIZE = 50; // Example: Define the tick time size, e.g., 100 milliseconds per tick
+    public static long TICK_TIME_SIZE = 100; // Example: Define the tick time size, e.g., 100 milliseconds per tick
 
     private final int  assistantCount;
     private final int customerCount;
@@ -47,8 +47,13 @@ public class ThriftStore {
         }
 
         // Start customer threads
+<<<<<<< HEAD
         for (int i = 0; i < customerCount; i++) {
             customerPool.submit(new Customer(i, sections));
+=======
+        for (int i = 0; i < 5; i++) {
+            customerPool.submit(new Customer(i, sections, tickCount));
+>>>>>>> ad69f89 (more output :))
         }
     }
 
