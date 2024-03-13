@@ -10,8 +10,12 @@ public class Section {
     private boolean isBeingStocked = false;
 
     // Constructor to initialize a Section with a name
-    public Section(String name) {
+    public Section(String name, int initialItems) throws InterruptedException {
         this.name = name;
+
+        for (int i = 0; i < initialItems; i++) {
+            addItem(new Item(name));
+        }
     }
 
     // Method to set the section as being stocked

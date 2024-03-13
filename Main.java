@@ -8,12 +8,12 @@ import src.main.thriftstore.model.DeliveryBox;
 import src.main.thriftstore.concurrent.Assistant;
 import src.main.thriftstore.concurrent.Customer;
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // Initialize sections
         Map<String, Section> sections = new HashMap<>();
         String[] categories = {"electronics", "clothing", "furniture", "toys", "sporting goods", "books"};
         for (String category : categories) {
-            sections.put(category, new Section(category));
+            sections.put(category, new Section(category, 5));
         }
 
         // Initialize the delivery box

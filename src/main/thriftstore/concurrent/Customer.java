@@ -41,6 +41,7 @@ public class Customer implements Runnable {
                     // Attempt to remove (buy) an item from the chosen section
                     section.removeWaitingCustomer();
                     Item item = section.removeItem();
+
                     System.out.println("Customer " + id + " bought " + item.getCategory() + " from " + category);
                 }
                 
