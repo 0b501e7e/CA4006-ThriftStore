@@ -29,7 +29,7 @@ public class Main {
         // Start the simulation
         thriftStore.startSimulation();
 
-        // Setup a shutdown hook to ensure resources are cleaned up properly
+        // Set up a shutdown hook to ensure resources are cleaned up properly
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             thriftStore.stopSimulation();
             System.out.println("Simulation stopped.");
