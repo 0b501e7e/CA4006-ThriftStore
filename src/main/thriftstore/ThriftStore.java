@@ -55,23 +55,26 @@ public class ThriftStore {
         int currentTick = tickCount.incrementAndGet();
         System.out.println("Tick: " + currentTick);
 
+        // Attempt to simulate a delivery with a probability of 0.01 every tick.
         if( random.nextDouble() < 0.01 ) {
             simulateDelivery();
         }
     }
 
     private void simulateDelivery() {
-        // Randomly create and distribute items across categories
-        // Example: Randomly create 10 items and add them to the delivery box
+        // Simulates creating and distributing 10 items across categories randomly.
         List<Item> items = new ArrayList<>();
-        Random random = new Random();
-        String[] categories = {"electronics", "clothing", "furniture", "toys", "sporting goods", "books"};
-        for (int i = 0; i < 10; i++) { // Simulate 10 items per delivery
-            String category = categories[random.nextInt(categories.length)];
+        for (int i = 0; i < 10; i++) {
+            String category = getRandomCategory();
             items.add(new Item(category));
         }
         deliveryBox.addItems(items);
         System.out.println("Delivered items to the box.");
+    }
+
+    private String getRandomCategory() {
+        String[] categories = {"electronics", "clothing", "furniture", "toys", "sporting goods", "books"};
+        return categories[random.nextInt(categories.length)];
     }
 
     public void stopSimulation() {
