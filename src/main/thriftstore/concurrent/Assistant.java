@@ -1,6 +1,7 @@
 package src.main.thriftstore.concurrent;
 
 // Imports from the model package for item handling and the concurrent package for managing shared resources
+import src.main.thriftstore.ThriftStore;
 import src.main.thriftstore.model.Item;
 import src.main.thriftstore.model.Section;
 import src.main.thriftstore.model.DeliveryBox;
@@ -82,7 +83,7 @@ public class Assistant implements Runnable {
 
     private long calculateMovementTime() {
         // 10 ticks for movement, plus 1 for each item carried
-        return (10 + carriedItems.size()) * 100L; // Assuming 1 tick = 100 milliseconds
+        return (10 + carriedItems.size() * ThriftStore.TICK_TIME_SIZE); // Assuming 1 tick = 100 milliseconds
     }
 
     // might need to check the categories here, as we could have different items
@@ -93,7 +94,7 @@ public class Assistant implements Runnable {
                 Item item = iterator.next();
                 if (Objects.equals(item.getCategory(), currentSection.getName())) {
                     currentSection.addItem(item);
-                    Thread.sleep(100); // Simulating stocking time with variability
+                    Thread.sleep(ThriftStore.TICK_TIME_SIZE); // Simulating stocking time with variability
                     iterator.remove(); // Remove after stocking
                     System.out.println("[" + System.currentTimeMillis() + "] Assistant " + id + " stocked " + item.getCategory() + " in " + currentSection.getName());
                 }
@@ -148,7 +149,7 @@ public class Assistant implements Runnable {
 
     // Breaks taken by assistants (e.g., every 200-300 ticks an assistant will take a break of 150 ticks).
     private void takeBreak() throws InterruptedException {
-        Thread.sleep(150);
+        Thread.sleep(150 * ThriftStore.TICK_TIME_SIZE);
         decideNextAction();
     }
 

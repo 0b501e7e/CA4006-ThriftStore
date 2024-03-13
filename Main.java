@@ -22,20 +22,20 @@ public class Main {
         DeliveryBox deliveryBox = new DeliveryBox();
 
         // Create thrift store simulation instance (not shown in previous steps but assumed to exist)
-        ThriftStore thriftStore = new ThriftStore();
+        ThriftStore thriftStore = new ThriftStore(Long.parseLong(args[0]));
 
         // Start ticking mechanism of the thrift store
         thriftStore.startSimulation();
 
         // Create and start threads for assistants
-        ExecutorService assistantService = Executors.newFixedThreadPool(2); // Assuming 2 assistants for simplicity
-        for (int i = 0; i < 2; i++) {
+        ExecutorService assistantService = Executors.newFixedThreadPool(Integer.parseInt(args[1])); // Assuming 2 assistants for simplicity
+        for (int i = 0; i < Integer.parseInt(args[1]); i++) {
             assistantService.submit(new Assistant(i + 1, deliveryBox, sections));
         }
 
         // Create and start threads for customers
-        ExecutorService customerService = Executors.newFixedThreadPool(5); // Assuming 5 customers for simplicity
-        for (int i = 0; i < 5; i++) {
+        ExecutorService customerService = Executors.newFixedThreadPool(Integer.parseInt(args[2])); // Assuming 5 customers for simplicity
+        for (int i = 0; i < Integer.parseInt(args[2]); i++) {
             customerService.submit(new Customer(i + 1, sections));
         }
 

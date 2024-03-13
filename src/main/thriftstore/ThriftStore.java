@@ -24,7 +24,9 @@ public class ThriftStore {
 
     private Random random = new Random();
 
-    public ThriftStore() {
+    public static long TICK_TIME_SIZE = 0;
+    public ThriftStore(long _TICK_TIME_SIZE) {
+        TICK_TIME_SIZE = _TICK_TIME_SIZE;
         // Initialize sections
         String[] categories = {"electronics", "clothing", "furniture", "toys", "sporting goods", "books"};
         for (String category : categories) {
@@ -99,13 +101,13 @@ public class ThriftStore {
     }
 
     public static void main(String[] args) {
-        ThriftStore store = new ThriftStore();
+        ThriftStore store = new ThriftStore(TICK_TIME_SIZE);
         store.startSimulation();
 
         // Example: Stop simulation after some time or based on some condition
         // This could be replaced with a more sophisticated control mechanism
         try {
-            Thread.sleep(10 * 1000); // Run for 10 seconds for demonstration
+            Thread.sleep(10 * TICK_TIME_SIZE); // Run for 10 seconds for demonstration
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

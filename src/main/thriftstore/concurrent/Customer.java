@@ -1,6 +1,7 @@
 package src.main.thriftstore.concurrent;
 
 // Necessary imports for handling items and sections from the model package, and for utility purposes
+import src.main.thriftstore.ThriftStore;
 import src.main.thriftstore.model.Item;
 import src.main.thriftstore.model.Section;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class Customer implements Runnable {
                 }
                 
                 // Simulate time delay for buying an item
-                Thread.sleep(10);
+                Thread.sleep(ThriftStore.TICK_TIME_SIZE);
             }
         } catch (InterruptedException e) {
             // Handle possible interruption of the customer thread
