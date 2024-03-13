@@ -38,7 +38,7 @@ public class ThriftStore {
 
         // Start assistant threads
         for (int i = 0; i < 2; i++) {
-            assistantPool.submit(new Assistant(i, deliveryBox, sections));
+            assistantPool.submit(new Assistant(i, deliveryBox, sections, tickCount));
         }
 
         // Start customer threads

@@ -5,6 +5,7 @@ import src.main.thriftstore.ThriftStore;
 import src.main.thriftstore.model.Item;
 import src.main.thriftstore.model.Section;
 import src.main.thriftstore.model.DeliveryBox;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import java.util.*;
 
@@ -33,13 +34,14 @@ public class Assistant implements Runnable {
     // mapping of sections to customers waiting
     private final Map<Section, Integer> waitingMapping = new HashMap<>();
 
-
-
+    // for tick count
+    private final AtomicInteger tickCount;
     // Constructor initializes the assistant with an ID, delivery box, and sections map
-    public Assistant(int id, DeliveryBox deliveryBox, Map<String, Section> sections) {
+    public Assistant(int id, DeliveryBox deliveryBox, Map<String, Section> sections, AtomicInteger tickCount) {
         this.id = id;
         this.deliveryBox = deliveryBox;
         this.sections = sections;
+        this.tickCount = tickCount; // Initialize the tick count
     }
 
     // The core logic of stocking items executed when the assistant thread starts
@@ -96,9 +98,17 @@ public class Assistant implements Runnable {
                     currentSection.addItem(item);
                     Thread.sleep(ThriftStore.TICK_TIME_SIZE); // Simulating stocking time with variability
                     iterator.remove(); // Remove after stocking
-                    System.out.println("[" + System.currentTimeMillis() + "] Assistant " + id + " stocked " + item.getCategory() + " in " + currentSection.getName());
+                    System.out.println(String.format("<%d> Assistant=%d Started Stocking : %s=%d", 
+                    tickCount.get(), 
+                    id, 
+                    item.getCategory(), 
+                    1));
                 }
             }
+            System.out.println(String.format("<%d> Assistant=%d Finished Stocking : %s", 
+            tickCount.get(), 
+            id, 
+            currentSection.getName()));
         }
     }
 
