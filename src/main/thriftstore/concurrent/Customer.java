@@ -32,7 +32,7 @@ public class Customer implements Runnable {
                 Section section = sections.get(category);
                 
                 synchronized (section) {
-                    while (section.isEmpty()) {
+                    while (section.isEmpty() || section.isBeingStocked()) {
                         section.addWaitingCustomer();
                         section.wait(); // Wait for an item to become available
 

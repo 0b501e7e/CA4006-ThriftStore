@@ -7,12 +7,28 @@ public class Section {
     private final String name; // The name of the section (e.g., "electronics", "clothing")
     private final List<Item> items = new LinkedList<>(); // A list to hold items in this section
     private int waitingCustomers = 0;
+    private boolean isBeingStocked = false;
 
     // Constructor to initialize a Section with a name
     public Section(String name) {
         this.name = name;
     }
 
+    // Method to set the section as being stocked
+    public synchronized void startStocking() {
+        this.isBeingStocked = true;
+    }
+
+    // Method to set the section as not being stocked
+    public synchronized void finishStocking() {
+        this.isBeingStocked = false;
+        notifyAll(); // Notify waiting customers
+    }
+
+    // Method to check if the section is being stocked
+    public synchronized boolean isBeingStocked() {
+        return this.isBeingStocked;
+    }
 
 
     public synchronized void addWaitingCustomer() {
@@ -32,7 +48,8 @@ public class Section {
 
     // Adds an item to the section; synchronized to manage concurrent access
     public synchronized void addItem(Item item) throws InterruptedException {
-        while (this.isFull()) {
+        // wait while section is full
+        while (isFull()) {
             wait();
         }
         items.add(item);
@@ -52,7 +69,7 @@ public class Section {
 
     // Removes and returns the first item from the section; waits if no items are available
     public synchronized Item removeItem() throws InterruptedException {
-        while (items.isEmpty()) { // If the section is empty, wait
+        while (items.isEmpty() || isBeingStocked) { // If the section is empty, wait
             wait();
         }
         return items.remove(0); // Remove and return the first item

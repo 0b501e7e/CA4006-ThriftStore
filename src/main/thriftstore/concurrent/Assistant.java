@@ -15,18 +15,20 @@ public class Assistant implements Runnable {
     private final Map<String, Section> sections;
     // Unique identifier for each assistant for tracking and logging purposes
     private final int id;
-
+    // State Enum for managing the different actions
     private enum State {
         MOVING_TO_SECTION,
         STOCKING,
         RETURNING_TO_DELIVERY_AREA,
         INIT
     }
+    // current state variable
     private State currentState = State.INIT;
-
+    // items the assistant carries
     private List<Item> carriedItems = new ArrayList<>();
+    // current section
     private Section currentSection;
-
+    // mapping of sections to customers waiting
     private final Map<Section, Integer> waitingMapping = new HashMap<>();
 
 
@@ -56,7 +58,9 @@ public class Assistant implements Runnable {
                         currentState = State.STOCKING;
                     }
                     case STOCKING -> {
+                        currentSection.startStocking();
                         stockItems();
+                        currentSection.finishStocking();
                         decideNextAction();
                     }
                     case RETURNING_TO_DELIVERY_AREA -> {
