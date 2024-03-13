@@ -20,7 +20,8 @@ public class Assistant implements Runnable {
         MOVING_TO_SECTION,
         STOCKING,
         RETURNING_TO_DELIVERY_AREA,
-        INIT
+        INIT,
+        ON_BREAK
     }
     // current state variable
     private State currentState = State.INIT;
@@ -70,6 +71,7 @@ public class Assistant implements Runnable {
                     case INIT -> {
                         pickUpItems();
                     }
+                    case ON_BREAK -> takeBreak();
                 }
             }
         } catch (InterruptedException e) {
@@ -145,6 +147,9 @@ public class Assistant implements Runnable {
     }
 
     // Breaks taken by assistants (e.g., every 200-300 ticks an assistant will take a break of 150 ticks).
-    private void takeBreak() {}
+    private void takeBreak() throws InterruptedException {
+        Thread.sleep(150);
+        decideNextAction();
+    }
 
 }
