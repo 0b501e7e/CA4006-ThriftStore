@@ -24,12 +24,17 @@ public class ThriftStore {
     private final Random random = new Random();
     public static long TICK_TIME_SIZE = 50; // Example: Define the tick time size, e.g., 100 milliseconds per tick
 
+    private final int  assistantCount;
+    private final int customerCount;
+
     // Constructor accepting initialized components
     public ThriftStore(Map<String, Section> sections, DeliveryBox deliveryBox, int assistantCount, int customerCount) {
         this.sections = sections;
         this.deliveryBox = deliveryBox;
         this.assistantPool = Executors.newFixedThreadPool(assistantCount);
         this.customerPool = Executors.newFixedThreadPool(customerCount);
+        this.assistantCount = assistantCount;
+        this.customerCount = customerCount;
     }
 
     public void startSimulation() {
@@ -37,12 +42,12 @@ public class ThriftStore {
         scheduler.scheduleAtFixedRate(this::onTick, 0, TICK_TIME_SIZE, TimeUnit.MILLISECONDS);
 
         // Start assistant threads
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < assistantCount; i++) {
             assistantPool.submit(new Assistant(i, deliveryBox, sections, tickCount));
         }
 
         // Start customer threads
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < customerCount; i++) {
             customerPool.submit(new Customer(i, sections));
         }
     }
@@ -59,7 +64,7 @@ public class ThriftStore {
         }
 
         // Attempt to simulate a delivery with a probability of 0.01 every tick.
-        if( random.nextDouble() < 0.01 ) {
+        if( random.nextDouble() < 0.1 ) {
             simulateDelivery();
         }
     }
