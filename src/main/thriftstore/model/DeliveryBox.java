@@ -6,6 +6,10 @@ import java.util.List;
 public class DeliveryBox {
     private final List<Item> items = new ArrayList<>(); // Holds items to be stocked by assistants
 
+    public int getItems() {
+        return items.size();
+    }
+
     // Adds new items to the delivery box and notifies assistants waiting for items
     public synchronized void addItems(List<Item> newItems) {
         items.addAll(newItems); // Add new items to the list

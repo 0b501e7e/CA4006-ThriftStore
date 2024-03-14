@@ -115,4 +115,32 @@ public class ThriftStore {
             customerPool.shutdownNow();
         }
     }
+
+    public void refreshDisplay() {
+        // Clear the screen
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+
+        // Draw each section
+        for (String sectionName : sections.keySet()) {
+            Section section = sections.get(sectionName);
+            System.out.printf("+-------%s-------+\n", sectionName.toUpperCase());
+            System.out.printf("| Items: %-9d |\n", section.getItems());
+            System.out.printf("| Customers: %-5d |\n", section.getWaitingCustomers());
+            // Include assistant presence if any
+            System.out.println("+-----------------+");
+        }
+
+        // Display delivery box state
+        System.out.println("| DELIVERY BOX            |");
+        System.out.printf("| Items waiting: %-8d |\n", deliveryBox.getItems());
+        System.out.println("+-------------------------+");
+
+        // Display stats
+        System.out.println("| Stats: Ticks: 1234, Deliveries: 12, Purchases: 120, Active Assistants: 2 |");
+        System.out.println("+----------------------------------------------------------------------------+");
+    }
+
+// Call refreshDisplay() at each tick or after significant events to update the terminal GUI.
+
 }

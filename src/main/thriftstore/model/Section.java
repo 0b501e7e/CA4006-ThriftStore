@@ -18,6 +18,10 @@ public class Section {
         }
     }
 
+    public int getItems() {
+        return items.size();
+    }
+
     // Method to set the section as being stocked
     public synchronized void startStocking() {
         this.isBeingStocked = true;
