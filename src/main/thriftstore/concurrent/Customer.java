@@ -6,7 +6,6 @@ import src.main.thriftstore.model.Item;
 import src.main.thriftstore.model.Section;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 // a customer needs to be able to check if a section is being stocked and wait for that to be finished
 // takes 1 tick to take an item
@@ -18,17 +17,15 @@ public class Customer implements Runnable {
     private final Map<String, Section> sections; // Store sections accessible to the customer
     private final int id; // Unique identifier for the customer
     private static final Random random = new Random(); // Random generator for selecting items
-    private final AtomicInteger tickCount;
 
-    public Customer(int id, Map<String, Section> sections, AtomicInteger tickCount) {
+    public Customer(int id, Map<String, Section> sections) {
         this.id = id; // Assign the customer ID
         this.sections = sections; // Initialize sections from which the customer can buy items
-        this.tickCount = tickCount;
     }
 
     private void log(String action, String details) {
         long threadId = Thread.currentThread().threadId();
-        System.out.println(String.format("[Thread: %d, Customer: %d] %s - %s", threadId, id, action, details));
+        System.out.printf("[Thread: %d, Customer: %d] %s - %s%n", threadId, id, action, details);
     }
 
     @Override

@@ -58,11 +58,13 @@ public class Assistant implements Runnable {
                 switch (currentState) {
                     case MOVING_TO_SECTION -> {
                         // Calculate and simulate movement time
+                        log("Moving to section: " + currentSection.getName());
                         Thread.sleep(calculateMovementTime());
                         currentState = State.STOCKING;
-                        log("Moving to section: " + currentSection.getName());
+
                     }
                     case STOCKING -> {
+                        log("At Section: " + currentSection.getName());
                         currentSection.startStocking();
                         stockItems();
                         currentSection.finishStocking();
@@ -70,12 +72,11 @@ public class Assistant implements Runnable {
                     }
                     case RETURNING_TO_DELIVERY_AREA -> {
                         Thread.sleep(calculateMovementTime());
+                        log("At Delivery area");
                         pickUpItems();
-                        log("Returning to delivery area.");
+
                     }
-                    case INIT -> {
-                        pickUpItems();
-                    }
+                    case INIT -> pickUpItems();
                     case ON_BREAK -> takeBreak();
                 }
             }
@@ -87,8 +88,8 @@ public class Assistant implements Runnable {
 
     private void log(String message) {
         long threadId = Thread.currentThread().threadId();
-        System.out.println(String.format("[Thread: %d, Assistant: %d] %s",
-            threadId, id, message));
+        System.out.printf("[Thread: %d, Assistant: %d] %s%n",
+            threadId, id, message);
     }
 
     private long calculateMovementTime() {

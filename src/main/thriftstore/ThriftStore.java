@@ -48,7 +48,7 @@ public class ThriftStore {
 
         // Start customer threads
         for (int i = 0; i < customerCount; i++) {
-            customerPool.submit(new Customer(i, sections, tickCount));
+            customerPool.submit(new Customer(i, sections));
         }
     }
 
