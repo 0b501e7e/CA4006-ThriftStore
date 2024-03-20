@@ -120,9 +120,9 @@ public class Assistant implements Runnable {
        // then do the next or stock empty sections
        // if carried items is empty, go delivery area.
        if (carriedItems.isEmpty()) {
-//           System.out.printf("<%d> Assistant=%d RETURNING TO DELIVERY AREA \n",
-//                   tickCount.get(),
-//                   id);
+           System.out.printf("<%d> Assistant=%d RETURNING TO DELIVERY AREA \n",
+                   tickCount.get(),
+                   id);
            currentState = State.RETURNING_TO_DELIVERY_AREA;
            return;
        }
@@ -150,9 +150,9 @@ public class Assistant implements Runnable {
 
 
     private void pickUpItems() {
-//        System.out.printf("<%d> Assistant=%d PICKING UP ITEMS\n",
-//                tickCount.get(),
-//                id);
+        System.out.printf("<%d> Assistant=%d PICKING UP ITEMS\n",
+                tickCount.get(),
+                id);
         try {
             carriedItems = deliveryBox.takeItems(10);
             if (!carriedItems.isEmpty()) {

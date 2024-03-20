@@ -35,31 +35,35 @@ public class Customer implements Runnable {
     public void run() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                // Select a random section from which to buy an item
+
+                double probabilityOfPurchaseAttempt = 1.0 / 10; // On average, one purchase attempt every 10 ticks.
                 String[] categories = sections.keySet().toArray(new String[0]);
                 String category = categories[random.nextInt(categories.length)];
                 Section section = sections.get(category);
-                
-                synchronized (section) {
-                    while (section.isEmpty() || section.isBeingStocked()) {
-                        section.addWaitingCustomer();
-                        section.wait(); // Wait for an item to become available
-                        log("Waiting for item", String.format("Waiting for item in category: %s", category));
-                    }
-                    // Attempt to remove (buy) an item from the chosen section
-                    section.removeWaitingCustomer();
-                    Item item = section.removeItem();
+                if (random.nextDouble() < probabilityOfPurchaseAttempt) {
 
-                    log("Purchased item", String.format("Bought %s", item.getCategory()));
+                    synchronized (section) {
+                        if (section.isEmpty() || section.isBeingStocked()) {
+                            section.addWaitingCustomer();
+                            section.wait(); // Wait for an item to become available
+                            log("Waiting for item", String.format("Waiting for item in category: %s", category));
+                        }
+                            // Attempt to remove (buy) an item from the chosen section
+                            section.removeWaitingCustomer();
+                            Item item = section.removeItem();
+                            // Log the purchase.
+                            log("Purchased item", String.format("Bought %s", item.getCategory()));
+
+                    }
                 }
-                
-                // Simulate time delay for buying an item
+
+                // Sleep until the next tick.
                 Thread.sleep(ThriftStore.TICK_TIME_SIZE);
             }
         } catch (InterruptedException e) {
-            // Handle possible interruption of the customer thread
             log("Interrupted", "Customer thread was interrupted.");
             Thread.currentThread().interrupt();
         }
     }
+
 }
