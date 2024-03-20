@@ -22,6 +22,15 @@ public class Main {
         // Define the number of assistants and customers
         int assistantCount = 2;
         int customerCount = 5;
+        // Override with command-line arguments if provided
+        if (args.length >= 2) {
+            try {
+                assistantCount = Integer.parseInt(args[0]);
+                customerCount = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid input for number of assistants or customers, using default values.");
+            }
+        }
 
         // Create the ThriftStore instance with initialized components
         ThriftStore thriftStore = new ThriftStore(sections, deliveryBox, assistantCount, customerCount);
