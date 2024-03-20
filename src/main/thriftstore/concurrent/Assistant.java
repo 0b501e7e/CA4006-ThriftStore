@@ -36,12 +36,17 @@ public class Assistant implements Runnable {
 
     // for tick count
     private final AtomicInteger tickCount;
+    private AtomicInteger lastBreakTick = new AtomicInteger(0);
+    private final Random random = new Random();
+    private AtomicInteger nextBreakInterval = new AtomicInteger(200 + random.nextInt(101));
+
     // Constructor initializes the assistant with an ID, delivery box, and sections map
     public Assistant(int id, DeliveryBox deliveryBox, Map<String, Section> sections, AtomicInteger tickCount) {
         this.id = id;
         this.deliveryBox = deliveryBox;
         this.sections = sections;
         this.tickCount = tickCount; // Initialize the tick count
+        this.lastBreakTick.set(tickCount.get()); // Assuming the assistant might start without an immediate break
     }
 
     // The core logic of stocking items executed when the assistant thread starts
@@ -55,6 +60,14 @@ public class Assistant implements Runnable {
     public void run() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
+
+                int currentTick = tickCount.get();
+                if (currentTick - lastBreakTick.get() >= nextBreakInterval.get()) {
+                    takeBreak();
+                    lastBreakTick.set(currentTick);
+                    nextBreakInterval.set(random.nextInt(101) + 200); // Decide next break time
+                }
+
                 switch (currentState) {
                     case MOVING_TO_SECTION -> {
                         // Calculate and simulate movement time
@@ -166,10 +179,10 @@ public class Assistant implements Runnable {
         }
     }
 
-    // Breaks taken by assistants (e.g., every 200-300 ticks an assistant will take a break of 150 ticks).
     private void takeBreak() throws InterruptedException {
+        log("Assistant " + id + " taking a break.");
         Thread.sleep(150 * ThriftStore.TICK_TIME_SIZE);
-        decideNextAction();
+        log("Assistant " + id + " break ended.");
     }
 
 }
