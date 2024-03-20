@@ -7,8 +7,7 @@ import src.main.thriftstore.concurrent.Assistant;
 import src.main.thriftstore.concurrent.Customer;
 
 
-import src.main.thriftstore.model.*;
-import src.main.thriftstore.concurrent.*;
+
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -58,9 +57,9 @@ public class ThriftStore {
         
         // Display current tick and day, with day information appearing every 1000 ticks
         if (currentTick % 1000 == 0) {
-            System.out.println(String.format("\n<Day: %d, Tick: %d>", currentDay, currentTick));
+            System.out.printf("\n<Day: %d, Tick: %d>%n", currentDay, currentTick);
         } else {
-            System.out.println(String.format("<Tick: %d>", currentTick));
+            System.out.printf("<Tick: %d>%n", currentTick);
         }
 
         // Attempt to simulate a delivery with a probability of 0.01 every tick.
