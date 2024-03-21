@@ -1,22 +1,16 @@
 import src.main.thriftstore.ThriftStore;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Scanner; // Import the Scanner class
+import java.util.Scanner;
 import java.util.InputMismatchException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Set;
 import src.main.thriftstore.model.Section;
 import src.main.thriftstore.model.DeliveryBox;
 import src.main.thriftstore.concurrent.Assistant;
 import src.main.thriftstore.concurrent.Customer;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        // Initialize sections
-        Map<String, Section> sections = new HashMap<>();
-        String[] categories = {"electronics", "clothing", "furniture", "toys", "sporting goods", "books"};
-        for (String category : categories) {
-            sections.put(category, new Section(category, 5));
-        }
 
         // Initialize the delivery box
         DeliveryBox deliveryBox = new DeliveryBox();
@@ -26,6 +20,56 @@ public class Main {
         System.out.println("-------------------------------------------------");
         System.out.println("Welcome to Senan & Zak's Thrift Store Simulation!");
         System.out.println("-------------------------------------------------");
+
+        // List available categories
+        String[] categories = {"electronics", "clothing", "furniture", "toys", "sporting goods", "books"};
+        System.out.println("Available categories are: ");
+        for (int i = 0; i < categories.length; i++) {
+            System.out.println((i + 1) + ". " + categories[i]);
+        }
+        // Ask how many categories they want to include
+        int numCategories;
+        while (true) {
+            try {
+                System.out.print("How many categories would you like to include? ");
+                numCategories = scanner.nextInt();
+                if (numCategories <= 0 || numCategories > categories.length) throw new InputMismatchException("Invalid number of categories.");
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid number within the available range.");
+                scanner.next(); // Consume the invalid input
+            }
+        }
+
+        // Initialize sections based on user choice
+        Map<String, Section> sections = new HashMap<>();
+        Set<String> selectedCategories = new HashSet<>();
+        if (numCategories == categories.length) {
+            for (String category : categories) {
+                selectedCategories.add(category);
+                sections.put(category, new Section(category, 5));
+                System.out.println("Category chosen: " + category);
+            }
+        } else {
+            for (int i = 0; i < numCategories; i++) {
+                System.out.print("Enter the number for category " + (i + 1) + ": ");
+                int categoryChoice = scanner.nextInt() - 1;
+                scanner.nextLine(); // consume newline
+                if (categoryChoice >= 0 && categoryChoice < categories.length) {
+                    String selectedCategory = categories[categoryChoice];
+                    if (!selectedCategories.contains(selectedCategory)) {
+                        selectedCategories.add(selectedCategory);
+                        sections.put(selectedCategory, new Section(selectedCategory, 5));
+                        System.out.println("Category chosen: " + selectedCategory);
+                    } else {
+                        System.out.println(selectedCategory + " has already been selected. Skipping.");
+                    }
+                } else {
+                    System.out.println("Invalid selection. Please select a valid category number.");
+                    i--; // prompt the user again for this selection
+                }
+            }
+        }
 
         int assistantCount = 0;
         int customerCount = 0;
@@ -63,7 +107,7 @@ public class Main {
         System.out.println("-------------------------------------------------");
 
         // Create the ThriftStore instance with initialized components
-        ThriftStore thriftStore = new ThriftStore(sections, deliveryBox, assistantCount, customerCount);
+        ThriftStore thriftStore = new ThriftStore(sections, deliveryBox, assistantCount, customerCount, selectedCategories);
 
         // Start the simulation
         thriftStore.startSimulation();

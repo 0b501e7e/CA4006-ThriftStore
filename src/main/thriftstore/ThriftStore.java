@@ -25,15 +25,17 @@ public class ThriftStore {
 
     private final int  assistantCount;
     private final int customerCount;
+    private final Set<String> selectedCategories; // New member
 
     // Constructor accepting initialized components
-    public ThriftStore(Map<String, Section> sections, DeliveryBox deliveryBox, int assistantCount, int customerCount) {
+    public ThriftStore(Map<String, Section> sections, DeliveryBox deliveryBox, int assistantCount, int customerCount, Set<String> selectedCategories) {
         this.sections = sections;
         this.deliveryBox = deliveryBox;
         this.assistantPool = Executors.newFixedThreadPool(assistantCount);
         this.customerPool = Executors.newFixedThreadPool(customerCount);
         this.assistantCount = assistantCount;
         this.customerCount = customerCount;
+        this.selectedCategories = selectedCategories; // Store selected categories
     }
 
     public void startSimulation() {
@@ -90,8 +92,8 @@ public class ThriftStore {
     }
 
     private String getRandomCategory() {
-        String[] categories = {"electronics", "clothing", "furniture", "toys", "sporting goods", "books"};
-        return categories[random.nextInt(categories.length)];
+        String[] availableCategories = selectedCategories.toArray(new String[0]);
+        return availableCategories[random.nextInt(availableCategories.length)];
     }
 
     public void stopSimulation() {
