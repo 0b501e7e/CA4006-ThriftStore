@@ -1,6 +1,8 @@
 import src.main.thriftstore.ThriftStore;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner; // Import the Scanner class
+import java.util.InputMismatchException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import src.main.thriftstore.model.Section;
@@ -19,18 +21,46 @@ public class Main {
         // Initialize the delivery box
         DeliveryBox deliveryBox = new DeliveryBox();
 
-        // Define the number of assistants and customers
-        int assistantCount = 2;
-        int customerCount = 5;
-        // Override with command-line arguments if provided
-        if (args.length >= 2) {
+        Scanner scanner = new Scanner(System.in); // Create a Scanner object for collecting parameters
+
+        System.out.println("-------------------------------------------------");
+        System.out.println("Welcome to Senan & Zak's Thrift Store Simulation!");
+        System.out.println("-------------------------------------------------");
+
+        int assistantCount = 0;
+        int customerCount = 0;
+
+        // Prompt for the number of assistants with error handling
+        while (true) {
             try {
-                assistantCount = Integer.parseInt(args[0]);
-                customerCount = Integer.parseInt(args[1]);
-            } catch (NumberFormatException e) {
-                System.err.println("Invalid input for number of assistants or customers, using default values.");
+                System.out.print("Enter the number of assistants: ");
+                assistantCount = scanner.nextInt(); // Read user input for assistants
+                if (assistantCount < 0) throw new InputMismatchException("Number must be positive.");
+                break; // Break the loop if input is valid
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid positive integer.");
+                scanner.next(); // Consume the invalid input
             }
         }
+
+        // Prompt for the number of customers with error handling
+        while (true) {
+            try {
+                System.out.print("Enter the number of customers: ");
+                customerCount = scanner.nextInt(); // Read user input for customers
+                if (customerCount < 0) throw new InputMismatchException("Number must be positive.");
+                break; // Break the loop if input is valid
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid positive integer.");
+                scanner.next(); // Consume the invalid input
+            }
+        }
+
+        scanner.close(); // Close the scanner
+
+        System.out.println("-------------------------------------------------");
+        System.out.println("Thriftstore Opening");
+        System.out.println("-------------------------------------------------");
 
         // Create the ThriftStore instance with initialized components
         ThriftStore thriftStore = new ThriftStore(sections, deliveryBox, assistantCount, customerCount);
@@ -41,7 +71,9 @@ public class Main {
         // Set up a shutdown hook to ensure resources are cleaned up properly
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             thriftStore.stopSimulation();
-            System.out.println("Simulation stopped.");
+            System.out.println("-------------------------------------------------");
+            System.out.println("Thriftstore has closed");
+            System.out.println("-------------------------------------------------");
         }));
     }
 }
