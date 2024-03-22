@@ -1,4 +1,5 @@
-import src.main.thriftstore.ThriftStore;
+package src.main.thriftstore;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
